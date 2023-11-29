@@ -17,6 +17,7 @@ jobs:
     functionPublishPath: '$(build.artifactstagingdirectory)/functionapp'
     armParametersScriptPath: $(System.DefaultWorkingDirectory)/.pipelines/scripts/Add-ArmParametersFromBicepparamFiles.ps1
     mainBicepPath: $(System.DefaultWorkingDirectory)/.infrastructure/bicep/main.bicep
+    functionSolutionPath: $(System.DefaultWorkingDirectory)/function-app/FunctionsOrderFulfillmentDemo.sln
   steps:
     - task: Bash@3
       displayName: Build Infrastructure Templates
@@ -39,7 +40,7 @@ jobs:
 
     - script: |
         dotnet restore
-        dotnet build --configuration Release
+        dotnet build FunctionsOrderFulfillmentDemo.sln --configuration Release
       displayName: Build Function App
     
     - task: DotNetCoreCLI@2
