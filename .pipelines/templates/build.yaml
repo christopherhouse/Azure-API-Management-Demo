@@ -16,7 +16,7 @@ jobs:
   variables:
     functionPublishPath: '$(build.artifactstagingdirectory)/functionapp'
     armParametersScriptPath: $(System.DefaultWorkingDirectory)/.pipelines/scripts/Add-ArmParametersFromBicepparamFiles.ps1
-    mainBicepPath: $(System.DefaultWorkingDirectory)/.infrastructure/main.bicep
+    mainBicepPath: $(System.DefaultWorkingDirectory)/.infrastructure/bicep/main.bicep
   steps:
     - task: Bash@3
       displayName: Build Infrastructure Templates
@@ -28,7 +28,7 @@ jobs:
     - task: PowerShell@2
       displayName: Generate ARM parameters from *.bicepparam
       inputs:
-        workingDirectory: $(System.DefaultWorkingDirectory)/.infrastructure/parameters/
+        workingDirectory: $(System.DefaultWorkingDirectory)/.infrastructure/bicep/parameters/
         filePath: $(armParametersScriptPath)
 
     - task: UseDotNet@2
