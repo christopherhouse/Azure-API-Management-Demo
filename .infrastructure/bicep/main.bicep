@@ -3,6 +3,17 @@ param workloadPrefix string
 param workloadName string
 param environmentName string
 param location string
+param apimPublisherEmail string
+param apimPublisherName string
+param apimSkuCapacity int
+@allowed([
+  'Developer'
+  'Standard'
+  'Premium'
+  'Basic'
+  'Consumption'
+])
+param apimSkuName string
 @allowed([
   'Basic'
   'Standard'
@@ -50,6 +61,7 @@ var functionAppName = '${baseName}-func'
 var functionAppUserAssignedIdentityName = '${functionAppName}-uami'
 var cosmosDbAccountName = '${baseName}-cdb-acct'
 var loadTestingName = '${baseName}-alt'
+var apimName = '${baseName}-apim'
 
 // Deployment Names
 var serviceBusDeploymentName = '${serviceBusNamespaceName}-${buildId}'
@@ -73,12 +85,26 @@ var statusNotificationTopicSubscriptionDeploymentName = '${statusNotificationTop
 var loadTestingDeploymentName = '${loadTestingName}-${buildId}'
 var sendApprovalTopicDeploymentName = '${sendApprovalTopicName}-${buildId}'
 var allCreditApprovalsSubscriptionDeploymentName = '${allCreditApprovalsSubscription}-${buildId}'
+var apimDeploymentName = '${apimName}-${buildId}'
 
 var tags = {
   BuildId: buildId
   Environment: environmentName
   Workload: workloadName
   LastDeploymentDate: deploymentDate
+}
+
+module apim './modules/apiManagement/apiManagementService.bicep' = {
+  name: apimDeploymentName
+  params: {
+    serviceName: apimName
+    location: location
+    tags: tags
+    publisherEmail: apimPublisherEmail
+    publisherName: apimPublisherName
+    skuCapacity: apimSkuCapacity
+    skuName: apimSkuName
+  }
 }
 
 module sbNs './modules/serviceBus/serviceBusNamespace.bicep' = {
