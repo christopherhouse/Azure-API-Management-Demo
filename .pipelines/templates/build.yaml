@@ -40,7 +40,7 @@ jobs:
 
     - script: |
         dotnet restore
-        dotnet build FunctionsOrderFulfillmentDemo.sln --configuration Release
+        dotnet build $(functionSolutionPath) --configuration Release
       displayName: Build Function App
     
     - task: DotNetCoreCLI@2
