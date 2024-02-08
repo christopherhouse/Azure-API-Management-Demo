@@ -1,1 +1,8 @@
 apimServiceName: qademo-cmh-apim-qa-apim
+namedValues:
+ - name: FunctionAppKey
+   properties:
+     keyVault:
+       identityClientId: '12a3b43f-abc9-4c12-a3f6-f5e1390e0ca7'
+       secretIdentifier: 'https://qademo-cmh-apim-qa-kv.vault.azure.net/secrets/FunctionAppKey/9b9b389c2cf245ed897c31b64a070697'
+   
