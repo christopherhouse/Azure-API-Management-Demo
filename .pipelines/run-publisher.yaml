@@ -20,7 +20,7 @@ parameters:
       - publish-all-artifacts-in-repo
 
 variables:
-  - group: ecl-apim-automation
+  - group: cmhtst-apim-automation
   - name: System.Debug
     value: false
 stages:
