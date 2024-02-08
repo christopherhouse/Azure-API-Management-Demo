@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "displayName": "FunctionAppKey",
+    "keyVault": {
+      "identityClientId": "e0afa5d2-bd77-4b0a-b90c-90cd035916de",
+      "secretIdentifier": "https://demo-cmh-apim-dev-kv.vault.azure.net/secrets/FunctionAppKey"
+    },
+    "secret": true,
+    "tags": []
+  }
+}

@@ -1,0 +1,114 @@
+openapi: 3.0.1
+info:
+  title: Product Ordering
+  version: '2024-02-08'
+servers:
+  - url: https://demo-cmh-apim-dev-apim.azure-api.net/ordering/2024-02-08
+paths:
+  '/orderStatus/{customerId}/{orderId}':
+    get:
+      tags:
+        - name
+      summary: CheckOrderStatus
+      operationId: CheckOrderStatus
+      parameters:
+        - name: customerId
+          in: path
+          description: The **customerId** parameter
+          required: true
+          schema:
+            type: string
+        - name: orderId
+          in: path
+          description: The **orderId** parameter
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The OK response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderStatusResponse'
+              example:
+                orderId: string
+                customerId: string
+                status: string
+  /CreateSalesOrder:
+    post:
+      tags:
+        - name
+      summary: CreateSalesOrder
+      operationId: CreateSalesOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/submitOrderRequest'
+            example:
+              id: string
+              customerId: string
+              total: 0
+              lineItems:
+                - productNumber: string
+                  quantity: 0
+                  unitPrice: 0
+                  total: 0
+              status: string
+      responses:
+        '202':
+          description: The Accepted response
+components:
+  schemas:
+    orderLineItem:
+      type: object
+      properties:
+        productNumber:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+        unitPrice:
+          type: number
+          format: double
+        total:
+          type: number
+          format: double
+    orderStatusResponse:
+      type: object
+      properties:
+        orderId:
+          type: string
+        customerId:
+          type: string
+        status:
+          type: string
+    submitOrderRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        total:
+          type: number
+          format: double
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/orderLineItem'
+        status:
+          type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]
