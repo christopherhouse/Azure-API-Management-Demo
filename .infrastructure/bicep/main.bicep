@@ -354,13 +354,14 @@ module statusSub './modules/serviceBus/serviceBusTopicSubscription.bicep' = {
   }
 }
 
-module alt './modules/azureLoadTesting/azureLoadTesting.bicep' = {
-  name: loadTestingDeploymentName
-  params: {
-    loadTestsName: loadTestingName
-    location: location
-  }
-}
+// This thing is failing to deploy for some reason so removing for now
+// module alt './modules/azureLoadTesting/azureLoadTesting.bicep' = {
+//   name: loadTestingDeploymentName
+//   params: {
+//     loadTestsName: loadTestingName
+//     location: location
+//   }
+// }
 
 module sendApprovalEventTopic './modules/serviceBus/serviceBusTopic.bicep' = {
   name: sendApprovalTopicDeploymentName

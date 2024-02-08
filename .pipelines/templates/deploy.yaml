@@ -19,8 +19,7 @@ stages:
     - deployment: ${{ parameters.environmentName }}_Deployment
       displayName: ${{ parameters.environmentName }} Deployment
       pool:
-        name: ACA-Agents
-        # vmImage: ubuntu-latest
+        vmImage: ubuntu-latest
       environment: ${{ parameters.environmentName }}
       variables:
         infraTemplate: $(Pipeline.Workspace)/infrastructure/bicep/main.bicep
@@ -84,12 +83,21 @@ stages:
                 scriptLocation: scriptPath
                 arguments: ${{ parameters.resourceGroupName }} $(functionAppName) $(keyVaultName)
             
-            - task: AzureCLI@2
-              displayName: Import Product Ordering OpenAPI Spec into APIM
-              condition: eq('${{ parameters.importApimApi }}', true)
-              inputs:
-                azureSubscription: ${{ parameters.serviceConnectionName }}
-                scriptType: pscore
-                scriptLocation: scriptPath
-                scriptPath: $(importProductOrderingScriptFile)
-                arguments: -resourceGroupName ${{ parameters.resourceGroupName }} -apiManagementName $(apimName) -functionAppHostName $(functionAppHostName) -functionAppResourceId $(functionAppResourceId) -apiVersionIdentifier "2024-01-03" -functionAppKeyKeyVaultSecretUri $(functionAppKeyKeyVaultSecretUri) -userAssignedManagedIdentityClientId $(apimUserAssignedManagedIdentityClientId)
+            # - task: AzurePowershell@5
+            #   displayName: Import Product Ordering OpenAPI Spec into APIM
+            #   inputs:
+            #     azureSubscription: ${{ parameters.serviceConnectionName }}
+            #     scriptType: FilePath
+            #     scriptPath: $(importProductOrderingScriptFile)
+            #     scriptArguments: -resourceGroupName ${{ parameters.resourceGroupName }} -apiManagementName $(apimName) -functionAppHostName $(functionAppHostName) -functionAppResourceId $(functionAppResourceId) -apiVersionIdentifier "2024-01-03" -functionAppKeyKeyVaultSecretUri $(functionAppKeyKeyVaultSecretUri) -userAssignedManagedIdentityClientId $(apimUserAssignedManagedIdentityClientId)
+            #     preferredAzurePowerShellVersion: '11.2.0'
+
+            # - task: AzureCLI@2
+            #   displayName: Import Product Ordering OpenAPI Spec into APIM
+            #   condition: eq('${{ parameters.importApimApi }}', true)
+            #   inputs:
+            #     azureSubscription: ${{ parameters.serviceConnectionName }}
+            #     scriptType: pscore
+            #     scriptLocation: scriptPath
+            #     scriptPath: $(importProductOrderingScriptFile)
+            #     arguments: -resourceGroupName ${{ parameters.resourceGroupName }} -apiManagementName $(apimName) -functionAppHostName $(functionAppHostName) -functionAppResourceId $(functionAppResourceId) -apiVersionIdentifier "2024-01-03" -functionAppKeyKeyVaultSecretUri $(functionAppKeyKeyVaultSecretUri) -userAssignedManagedIdentityClientId $(apimUserAssignedManagedIdentityClientId)

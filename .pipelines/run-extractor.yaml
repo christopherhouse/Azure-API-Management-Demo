@@ -10,7 +10,7 @@ parameters:
   - name: APIM_REPOSITORY_NAME
     type: string
     displayName: APIM repository for pull request
-    default: EclAPiOps
+    default: 'Azure API Management Demo'
   - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
     type: string
     displayName: Folder where you want to extract the artifacts
@@ -39,7 +39,7 @@ parameters:
 trigger: none
 
 variables:
-  - group: ecl-apim-automation
+  - group: cmhtst-apim-automation
   - name: System.Debug
     value: false
 

@@ -25,7 +25,10 @@ param(
     $userAssignedManagedIdentityClientId
 )
 
-Install-Module Az.ApiManagement -Scope CurrentUser -Force
+$out = Get-Module Az -ListAvailable
+
+Write-Host "Here's the list:"
+Write-Host $out
 
 $apiId = "productordering-$apiVersionIdentifier"
 $openApiSpec = "https://$functionAppHostName/api/swagger.json"
