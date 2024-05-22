@@ -1,0 +1,58 @@
+name: Build Bicep and Function App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  functionPublishPath: "${{ github.workspace }}/functionapp"
+  armParametersScriptPath: "${{ github.workspace }}/.pipelines/scripts/Add-ArmParametersFromBicepparamFiles.ps1"
+  mainBicepPath: "${{ github.workspace }}/.infrastructure/bicep/main.bicep"
+  functionSolutionPath: "${{ github.workspace }}/function-app/FunctionsOrderFulfillmentDemo.sln"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Infrastructure Templates
+        run: bicep build ${{ env.mainBicepPath }}
+
+      - name: Generate ARM parameters from *.bicepparam
+        run: pwsh -File ${{ env.armParametersScriptPath }}
+        working-directory: ${{ github.workspace }}/.infrastructure/bicep/parameters/
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.x"
+
+      - name: Restore and Build Function App
+        run: |
+          dotnet restore
+          dotnet build ${{ env.functionSolutionPath }} --configuration Release
+
+      - name: Publish Function App
+        run: dotnet publish '**/*.csproj' --configuration Release --output ${{ env.functionPublishPath }}
+
+      - name: Upload Infrastructure Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: infrastructure
+          path: ${{ github.workspace }}/.infrastructure/
+
+      - name: Upload Function App Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: functionapp
+          path: ${{ env.functionPublishPath }}
+
+      - name: Upload Pipeline Scripts
+        uses: actions/upload-artifact@v2
+        with:
+          name: scripts
+          path: ${{ github.workspace }}/scripts
