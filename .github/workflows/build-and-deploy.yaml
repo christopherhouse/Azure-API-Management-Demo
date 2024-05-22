@@ -1,4 +1,4 @@
-name: Build Bicep and Function App
+name: Build and Deploy
 
 on:
   push:
@@ -8,28 +8,25 @@ on:
 
 env:
   functionPublishPath: "${{ github.workspace }}/functionapp"
-  armParametersScriptPath: "${{ github.workspace }}/.pipelines/scripts/Add-ArmParametersFromBicepparamFiles.ps1"
   mainBicepPath: "${{ github.workspace }}/.infrastructure/bicep/main.bicep"
   functionSolutionPath: "${{ github.workspace }}/function-app/FunctionsOrderFulfillmentDemo.sln"
+  bicepParametersPath: "${{ github.workspace }}/.infrastructure/bicep/parameters/main.dev.bicepparam"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Build Infrastructure Templates
-        run: bicep build ${{ env.mainBicepPath }}
-
-      - name: Generate ARM parameters from *.bicepparam
-        run: pwsh -File ${{ env.armParametersScriptPath }}
-        working-directory: ${{ github.workspace }}/.infrastructure/bicep/parameters/
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "6.x"
+
+      - name: Build Infrastructure Templates
+        run: bicep build ${{ env.mainBicepPath }}
 
       - name: Restore and Build Function App
         run: |
@@ -39,20 +36,18 @@ jobs:
       - name: Publish Function App
         run: dotnet publish '**/*.csproj' --configuration Release --output ${{ env.functionPublishPath }}
 
-      - name: Upload Infrastructure Artifacts
-        uses: actions/upload-artifact@v2
+      - name: Deploy Bicep Template
+        uses: azure/arm-deploy@v1
         with:
-          name: infrastructure
-          path: ${{ github.workspace }}/.infrastructure/
+          scope: resourcegroup
+          subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ secrets.RESOURCE_GROUP_NAME }}
+          template: ${{ env.mainBicepPath }}
+          parameters: ${{ env.bicepParametersPath }}
 
-      - name: Upload Function App Artifact
-        uses: actions/upload-artifact@v2
+      - name: Deploy Function App
+        uses: azure/functions-action@v1
         with:
-          name: functionapp
-          path: ${{ env.functionPublishPath }}
-
-      - name: Upload Pipeline Scripts
-        uses: actions/upload-artifact@v2
-        with:
-          name: scripts
-          path: ${{ github.workspace }}/scripts
+          app-name: ${{ secrets.FUNCTION_APP_NAME }}
+          package: ${{ env.functionPublishPath }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
