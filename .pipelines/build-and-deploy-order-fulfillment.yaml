@@ -22,7 +22,7 @@ stages:
    parameters:
      serviceConnectionName: ${{ parameters.serviceConnectionName }}
      environmentName: dev
-     resourceGroupName: APIM-DEMO-RG
+     resourceGroupName: KBR-DEMO
      importApimApi: true
 
  - template: templates/deploy.yaml
